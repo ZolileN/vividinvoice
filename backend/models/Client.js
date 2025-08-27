@@ -2,36 +2,26 @@ const mongoose = require('mongoose');
 
 const clientSchema = new mongoose.Schema({
   user: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  companyName: {
+  name: {
     type: String,
-    required: [true, 'Please add a company name'],
+    required: [true, 'Please add a client name'],
     trim: true
   },
-  contactPerson: {
-    name: {
-      type: String,
-      required: [true, 'Please add a contact name'],
-      trim: true
-    },
-    email: {
-      type: String,
-      match: [
-        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        'Please add a valid email'
-      ]
-    },
-    phone: {
-      type: String,
-      trim: true
-    },
-    position: {
-      type: String,
-      trim: true
-    }
+  email: {
+    type: String,
+    required: [true, 'Please add an email'],
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'Please add a valid email'
+    ]
+  },
+  phone: {
+    type: String,
+    trim: true
   },
   vatNumber: {
     type: String,
@@ -50,7 +40,7 @@ const clientSchema = new mongoose.Schema({
       type: String,
       trim: true
     },
-    province: {
+    state: {
       type: String,
       trim: true
     },
@@ -60,49 +50,35 @@ const clientSchema = new mongoose.Schema({
     },
     country: {
       type: String,
-      default: 'South Africa',
       trim: true
     }
   },
-  isVATRegistered: {
-    type: Boolean,
-    default: false
-  },
   paymentTerms: {
     type: Number,
-    default: 30, // Default payment terms in days
-    min: 0
+    default: 30
   },
   notes: {
     type: String,
     trim: true
-  },
-  status: {
-    type: String,
-    enum: ['active', 'inactive', 'lead'],
-    default: 'active'
-  },
-  tags: [{
-    type: String,
-    trim: true
-  }],
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
   }
+}, {
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
-// Update the updatedAt field before saving
-clientSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
+// Reverse populate with virtuals
+clientSchema.virtual('invoices', {
+  ref: 'Invoice',
+  localField: '_id',
+  foreignField: 'client',
+  justOne: false
+});
+
+// Cascade delete invoices when a client is deleted
+clientSchema.pre('remove', async function(next) {
+  await this.model('Invoice').deleteMany({ client: this._id });
   next();
 });
-
-// Create a compound index for user and company name to ensure uniqueness
-clientSchema.index({ user: 1, companyName: 1 }, { unique: true });
 
 module.exports = mongoose.model('Client', clientSchema);

@@ -6,7 +6,8 @@ const {
   createClient,
   updateClient,
   deleteClient,
-  getClientStatistics
+  getClientStatistics,
+  searchClients
 } = require('../controllers/clientController');
 
 const { protect, authorize } = require('../middleware/auth');
@@ -19,15 +20,20 @@ router.use(protect);
 // Route for client statistics
 router.get('/statistics', getClientStatistics);
 
+// Search clients
+router.get('/search', searchClients);
+
 router
   .route('/')
   .get(
     advancedResults(Client, [
-      { path: 'user', select: 'name companyName' }
-    ], {
-      path: 'invoices',
-      select: 'invoiceNumber total status'
-    }),
+      { path: 'user', select: 'name' },
+      { 
+        path: 'invoices', 
+        select: 'invoiceNumber total status dueDate',
+        match: { status: { $ne: 'paid' } }
+      }
+    ]),
     getClients
   )
   .post(createClient);

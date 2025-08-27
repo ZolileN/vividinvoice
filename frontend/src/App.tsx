@@ -17,6 +17,11 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
 
+// Client Pages
+import ClientsPage from './features/clients/pages/ClientsPage';
+import ClientForm from './features/clients/components/ClientForm';
+import ClientDetailPage from './features/clients/pages/ClientDetailPage';
+
 // Initialize theme
 const { defaultAlgorithm } = theme; 
 
@@ -43,7 +48,7 @@ const AppRoutes = () => {
   }
 
   // If user is not authenticated and trying to access protected routes, redirect to login
-  if (!isAuthenticated && !['/login', '/register'].includes(location.pathname)) {
+  if (!isAuthenticated && !['/login', '/register', '/'].includes(location.pathname)) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
@@ -62,9 +67,15 @@ const AppRoutes = () => {
       />
 
       {/* Protected Routes */}
-      <Route element={<MainLayout>{<Outlet />}</MainLayout>}>
+      <Route element={<MainLayout><Outlet /></MainLayout>}>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        
+        {/* Client Management Routes */}
+        <Route path="/clients" element={<ClientsPage />} />
+        <Route path="/clients/new" element={<ClientForm />} />
+        <Route path="/clients/:id" element={<ClientDetailPage />} />
+        <Route path="/clients/:id/edit" element={<ClientForm />} />
         
         {/* Add more protected routes here */}
         <Route path="*" element={<NotFoundPage />} />
