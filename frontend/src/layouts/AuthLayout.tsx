@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import { Layout, Typography } from 'antd';
+import Layout from 'antd/es/layout';
+import Typography from 'antd/es/typography';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 

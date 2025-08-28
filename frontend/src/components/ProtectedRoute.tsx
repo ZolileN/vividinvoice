@@ -1,32 +1,35 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAppSelector } from '../store/hooks';
-import { isAuthenticated } from '../utils/auth';
+import { useGetMe } from '../api/authService';
+import LoadingSpinner from './LoadingSpinner';
 
 interface ProtectedRouteProps {
-  children?: React.ReactNode;
+  requiredRole?: string[];
   redirectPath?: string;
-  requireAdmin?: boolean;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
+  requiredRole = [],
   redirectPath = '/login',
-  requireAdmin = false,
 }) => {
-  const { user, isAuthenticated: isAuth } = useAppSelector((state) => state.auth);
-  const isUserAuthenticated = isAuthenticated() && isAuth;
-  
-  // Check if admin access is required and user is admin
-  const isAuthorized = requireAdmin 
-    ? isUserAuthenticated && user?.role === 'admin'
-    : isUserAuthenticated;
+  const { data: user, isLoading, error } = useGetMe();
 
-  if (!isAuthorized) {
+  if (isLoading) {
+    return <LoadingSpinner fullScreen />;
+  }
+
+  // If there's an error or no user, redirect to login
+  if (error || !user) {
     return <Navigate to={redirectPath} replace />;
   }
 
-  return children ? <>{children}</> : <Outlet />;
+  // Check if user has required role if specified
+  if (requiredRole.length > 0 && !requiredRole.includes(user.role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  // If authenticated and authorized, render the child routes
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

@@ -1,16 +1,29 @@
 import React, { useEffect } from 'react';
-import { Row, Col, Card, Typography, Statistic, Table, Tag } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import Row from 'antd/es/row';
+import Col from 'antd/es/col';
+import Card from 'antd/es/card';
+import Typography from 'antd/es/typography';
+import Statistic from 'antd/es/statistic';
+import Table from 'antd/es/table';
+import Tag from 'antd/es/tag';
+import Button from 'antd/es/button';
+import Space from 'antd/es/space';
+import message from 'antd/es/message';
 import { 
   ArrowUpOutlined, 
   ArrowDownOutlined, 
   FileTextOutlined, 
   TeamOutlined, 
   CreditCardOutlined,
-  DollarOutlined 
+  DollarOutlined,
+  LogoutOutlined 
 } from '@ant-design/icons';
 import { Bar, Pie } from '@ant-design/charts';
 import MainLayout from '../layouts/MainLayout';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useGetMe, useLogout } from '../api/authService';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const { Title, Text } = Typography;
 
@@ -41,11 +54,37 @@ const paymentMethodsData = [
 const DashboardPage: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { data: userData, isLoading, error } = useGetMe();
 
-  // Fetch dashboard data on component mount
   useEffect(() => {
-    // TODO: Fetch dashboard data
-  }, [dispatch]);
+    if (error) {
+      message.error('Failed to load user data');
+    }
+  }, [error]);
+
+    // Fetch dashboard data on component mount
+    useEffect(() => {
+      // TODO: Fetch dashboard data
+    }, [dispatch]);
+
+  const { execute: logout } = useLogout();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      message.success('Logged out successfully');
+      navigate('/login');
+    } catch (err) {
+      message.error('Failed to log out');
+    }
+  };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+
 
   const columns = [
     {
@@ -119,6 +158,14 @@ const DashboardPage: React.FC = () => {
       <div style={{ marginBottom: 24 }}>
         <Title level={4} style={{ marginBottom: 0 }}>Welcome back, {user?.name || 'User'} 👋</Title>
         <Text type="secondary">Here's what's happening with your business today</Text>
+        <Button 
+          type="text" 
+          icon={<LogoutOutlined />} 
+          onClick={handleLogout}
+          style={{ float: 'right' }}
+        >
+          Logout
+        </Button>
       </div>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>

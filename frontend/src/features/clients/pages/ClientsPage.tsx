@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Table, 
-  Button, 
-  Input, 
-  Space, 
-  Card, 
-  Typography, 
-  Tag, 
-  Badge, 
-  Tooltip, 
-  message, 
-  Popconfirm,
-  Row,
-  Col
-} from 'antd';
+import Table from 'antd/es/table';
+import Button from 'antd/es/button';
+import Input from 'antd/es/input';
+import Space from 'antd/es/space';
+import Card from 'antd/es/card';
+import Typography from 'antd/es/typography';
+import Tag from 'antd/es/tag';
+import Badge from 'antd/es/badge';
+import Tooltip from 'antd/es/tooltip';
+import message from 'antd/es/message';
+import Popconfirm from 'antd/es/popconfirm';
+import Row from 'antd/es/row';
+import Col from 'antd/es/col';
 import { 
   PlusOutlined, 
   SearchOutlined, 
@@ -27,7 +25,6 @@ import {
 import { formatDate } from '../../../utils/formatters';
 import { useClients } from '../hooks/useClients';
 import { Client } from '../clientTypes';
-import search from 'antd/es/transfer/search';
 
 const { Title } = Typography;
 const { Search } = Input;

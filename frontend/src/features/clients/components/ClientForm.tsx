@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Form, Input, Button, Card, Row, Col, Typography, message, Spin, Select, InputNumber } from 'antd';
+import Form from 'antd/es/form';
+import Input from 'antd/es/input';
+import Button from 'antd/es/button';
+import Card from 'antd/es/card';
+import Row from 'antd/es/row';
+import Col from 'antd/es/col';
+import Typography from 'antd/es/typography';
+import message from 'antd/es/message';
+import Spin from 'antd/es/spin';
+import Select from 'antd/es/select';
+import InputNumber from 'antd/es/input-number';
 import { SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Client, ClientFormData } from '../clientTypes';
 import clientService from '../clientService';

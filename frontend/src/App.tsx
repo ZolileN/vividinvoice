@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
-import { ConfigProvider, App as AntdApp, theme } from 'antd';
+import { Routes, Route, Navigate, useLocation, Outlet, BrowserRouter } from 'react-router-dom';
+import ConfigProvider from 'antd/es/config-provider';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { setCredentials } from './features/auth/authSlice';
 import { getToken } from './utils/auth';
+import ErrorBoundary from './components/ErrorBoundary';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Layouts
 import AuthLayout from './layouts/AuthLayout';
@@ -16,14 +18,16 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
+import UnauthorizedPage from './pages/UnauthorizedPage';
 
 // Client Pages
 import ClientsPage from './features/clients/pages/ClientsPage';
 import ClientForm from './features/clients/components/ClientForm';
 import ClientDetailPage from './features/clients/pages/ClientDetailPage';
+import InvoiceRoutes from './features/invoices/routes/InvoiceRoutes';
+import ClientRoutes from './features/clients/routes/ClientRoutes';
+import SettingsPage from './pages/SettingsPage';
 
-// Initialize theme
-const { defaultAlgorithm } = theme; 
 
 // Component to handle authentication and routing
 const AppRoutes = () => {
@@ -87,31 +91,27 @@ const AppRoutes = () => {
 // Main App component
 function App() {
   return (
-    <Provider store={store}>
-      <ConfigProvider
-        theme={{
-          algorithm: defaultAlgorithm,
-          token: {
-            colorPrimary: '#1890ff',
-            borderRadius: 8,
-          },
-          components: {
-            Layout: {
-              headerBg: '#fff',
-              headerHeight: 64,
-              headerPadding: '0 24px',
-              headerColor: 'rgba(0, 0, 0, 0.85)',
-            },
-          },
-        }}
-      >
-        <AntdApp>
-          <Router>
-            <AppRoutes />
-          </Router>
-        </AntdApp>
-      </ConfigProvider>
-    </Provider>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+          
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/invoices/*" element={<InvoiceRoutes />} />
+            <Route path="/clients/*" element={<ClientRoutes />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+          
+          {/* 404 Page */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

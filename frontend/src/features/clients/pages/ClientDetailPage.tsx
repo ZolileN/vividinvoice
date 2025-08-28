@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { 
-  Card, 
-  Button, 
-  Tag, 
-  Descriptions, 
-  Row, 
-  Col, 
-  Typography, 
-  Space, 
-  Divider, 
-  Table, 
-  message,
-  Badge,
-  Tabs
-} from 'antd';
+import Card from 'antd/es/card';
+import Button from 'antd/es/button';
+import Tag from 'antd/es/tag';
+import Descriptions from 'antd/es/descriptions'; 
+import Row from 'antd/es/row'; 
+import Col from 'antd/es/col'; 
+import Typography from 'antd/es/typography'; 
+import Space from 'antd/es/space'; 
+import Divider from 'antd/es/divider'; 
+import Table from 'antd/es/table'; 
+import message from 'antd/es/message';
+import Badge from 'antd/es/badge';
+import Tabs from 'antd/es/tabs';
 import { 
   ArrowLeftOutlined, 
   EditOutlined, 

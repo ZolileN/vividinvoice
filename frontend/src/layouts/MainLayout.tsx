@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, theme, Typography, Dropdown, Avatar, Badge } from 'antd';
+import Layout from 'antd/es/layout';
+import Menu from 'antd/es/menu';
+import Button from 'antd/es/button';
+import theme from 'antd/es/theme';
+import Typography from 'antd/es/typography';
+import Dropdown from 'antd/es/dropdown';
+import Avatar from 'antd/es/avatar';
+import Badge from 'antd/es/badge';
 import { 
   DashboardOutlined, 
   FileTextOutlined, 

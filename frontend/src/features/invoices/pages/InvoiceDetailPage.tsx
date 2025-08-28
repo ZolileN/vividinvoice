@@ -1,12 +1,25 @@
 import React, { useEffect } from 'react';
+import Card from 'antd/es/card';
+import Typography from 'antd/es/typography';
+import Button from 'antd/es/button';
+import Space from 'antd/es/space';
+import Tag from 'antd/es/tag';
+import Divider from 'antd/es/divider';
+import Row from 'antd/es/row';
+import Col from 'antd/es/col';
+import Badge from 'antd/es/badge';
+import message from 'antd/es/message';
+import Alert from 'antd/es/alert';
+import Popconfirm from 'antd/es/popconfirm';
+import Dropdown from 'antd/es/dropdown';
+import Menu from 'antd/es/menu';
 import { 
-  Card, Typography, Button, Space, Tag, Divider, 
-  Row, Col, Badge, message, Alert, 
-  Popconfirm, Dropdown, Menu 
-} from 'antd';
-import { 
-  ArrowLeftOutlined, DownloadOutlined, MailOutlined, 
-  PrinterOutlined, CheckCircleOutlined, MoreOutlined 
+  ArrowLeftOutlined, 
+  DownloadOutlined, 
+  MailOutlined, 
+  PrinterOutlined, 
+  CheckCircleOutlined, 
+  MoreOutlined 
 } from '@ant-design/icons';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';

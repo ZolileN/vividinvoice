@@ -1,21 +1,19 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { 
-  Table, 
-  Button, 
-  Card, 
-  Typography, 
-  Space, 
-  Tag, 
-  Row, 
-  Col, 
-  Input, 
-  Select, 
-  DatePicker, 
-  Dropdown, 
-  Menu, 
-  Statistic,
-  message
-} from 'antd';
+import Table from 'antd/es/table';
+import Button from 'antd/es/button';
+import Card from 'antd/es/card';
+import Typography from 'antd/es/typography';
+import Space from 'antd/es/space';
+import Tag from 'antd/es/tag';
+import Row from 'antd/es/row';
+import Col from 'antd/es/col';
+import Input from 'antd/es/input';
+import Select from 'antd/es/select';
+import DatePicker from 'antd/es/date-picker';
+import Dropdown from 'antd/es/dropdown';
+import Menu from 'antd/es/menu';
+import Statistic from 'antd/es/statistic';
+import message from 'antd/es/message';
 import { 
   PlusOutlined, 
   SearchOutlined, 

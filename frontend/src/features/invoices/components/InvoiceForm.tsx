@@ -1,21 +1,19 @@
 import React, { useState, useEffect, ReactNode } from 'react';
-import { 
-  Form, 
-  Input, 
-  Button, 
-  Card, 
-  Typography, 
-  DatePicker, 
-  InputNumber, 
-  Select, 
-  Table, 
-  Space, 
-  Divider, 
-  Row, 
-  Col,
-  Alert,
-  message
-} from 'antd';
+import Form from 'antd/es/form';
+import Input from 'antd/es/input';
+import Button from 'antd/es/button';
+import Card from 'antd/es/card';
+import Typography from 'antd/es/typography';
+import DatePicker from 'antd/es/date-picker';
+import InputNumber from 'antd/es/input-number';
+import Select from 'antd/es/select';
+import Table from 'antd/es/table';
+import Space from 'antd/es/space';
+import Divider from 'antd/es/divider';
+import Row from 'antd/es/row';
+import Col from 'antd/es/col';
+import Alert from 'antd/es/alert';
+import message from 'antd/es/message';
 import { 
   PlusOutlined, 
   MinusCircleOutlined, 

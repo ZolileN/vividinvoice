@@ -152,3 +152,75 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [MongoDB](https://www.mongodb.com/)
 - [Express](https://expressjs.com/)
 - [Node.js](https://nodejs.org/)
+
+
+# VividInvoice - Authentication Flow Documentation
+
+## Overview
+The authentication system uses JWT (JSON Web Tokens) for secure user authentication. The token is stored in the browser's localStorage and is sent with each request to protected API endpoints.
+
+## Key Components
+
+### 1. Auth Service (`src/api/authService.ts`)
+A collection of React hooks that handle authentication-related API calls:
+
+- `useLogin`: Handles user login
+- `useRegister`: Handles user registration
+- `useGetMe`: Fetches the current user's data
+- `useUpdateDetails`: Updates user details
+- `useUpdatePassword`: Updates user password
+- `useLogout`: Handles user logout
+
+### 2. API Client (`src/api/client.ts`)
+A configured Axios instance that:
+- Sets the base URL
+- Adds the JWT token to requests
+- Handles 401 Unauthorized responses
+- Provides consistent error handling
+
+### 3. ProtectedRoute (`src/components/ProtectedRoute.tsx`)
+A wrapper component that:
+- Protects routes from unauthorized access
+- Handles role-based access control
+- Shows loading state while checking authentication
+- Redirects to login when not authenticated
+
+### 4. Error Handling
+- Centralized error handling in [src/utils/apiErrorHandler.ts](cci:7://file:///home/zolile/Documents/vividinvoice/frontend/src/utils/apiErrorHandler.ts:0:0-0:0)
+- Consistent error messages and user feedback
+- Automatic token refresh handling
+
+## Authentication Flow
+
+1. **Login**
+   - User submits login form
+   - `useLogin` hook is called with credentials
+   - On success, token is stored in localStorage
+   - User is redirected to dashboard
+
+2. **Protected Route Access**
+   - `ProtectedRoute` checks for valid token
+   - If no token, redirects to login
+   - If token exists, validates it with the server
+   - Loads user data and renders the route
+
+3. **API Requests**
+   - Token is automatically added to request headers
+   - 401 responses trigger logout
+   - Errors are handled consistently
+
+## Best Practices
+
+1. **Use the `useAsync` Hook**
+   ```typescript
+   const { data, isLoading, error, execute } = useAsync(someApiCall);
+
+   Test Data
+Test User:
+
+Email: test@example.com
+Password: Test@1234
+Admin User:
+
+Email: admin@example.com
+Password: Admin@1234
