@@ -91,27 +91,31 @@ const AppRoutes = () => {
 // Main App component
 function App() {
   return (
-    <ErrorBoundary>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/unauthorized" element={<UnauthorizedPage />} />
-          
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/invoices/*" element={<InvoiceRoutes />} />
-            <Route path="/clients/*" element={<ClientRoutes />} />
-            <Route path="/settings" element={<SettingsPage />} />
-          </Route>
-          
-          {/* 404 Page */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
-    </ErrorBoundary>
+    <Provider store={store}>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <ConfigProvider>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/unauthorized" element={<UnauthorizedPage />} />
+              
+              {/* Protected Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/invoices/*" element={<InvoiceRoutes />} />
+                <Route path="/clients/*" element={<ClientRoutes />} />
+                <Route path="/settings" element={<SettingsPage />} />
+              </Route>
+              
+              {/* 404 Page */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </ConfigProvider>
+        </BrowserRouter>
+      </ErrorBoundary>
+    </Provider>
   );
 }
 

@@ -1,5 +1,10 @@
 import React from 'react';
-import { Form, Input, Button, Card, Typography, Alert } from 'antd';
+import Form from 'antd/es/form';
+import Input from 'antd/es/input';
+import Button from 'antd/es/button';
+import Card from 'antd/es/card';
+import Typography from 'antd/es/typography';
+import Alert from 'antd/es/alert';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';

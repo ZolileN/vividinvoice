@@ -1,12 +1,17 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode, ReactElement, ComponentType } from 'react';
 import Result from 'antd/es/result';
 import Button from 'antd/es/button';
 import { HomeOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+
+type FallbackComponent = ComponentType<{ error: Error | null; resetError: () => void }>;
+type FallbackElement = ReactElement;
+type FallbackRender = (props: { error: Error | null; resetError: () => void }) => ReactNode;
+
+type FallbackType = FallbackComponent | FallbackElement | FallbackRender | null | undefined;
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
+  fallback?: FallbackType;
 }
 
 interface State {
@@ -16,10 +21,8 @@ interface State {
 }
 
 const DefaultFallback = ({ error, resetError }: { error: Error | null; resetError: () => void }) => {
-  const navigate = useNavigate();
-  
   const handleGoHome = () => {
-    navigate('/');
+    window.location.href = '/';
     resetError();
   };
 
@@ -36,11 +39,8 @@ const DefaultFallback = ({ error, resetError }: { error: Error | null; resetErro
             icon={<HomeOutlined />} 
             onClick={handleGoHome}
           >
-            Back Home
-          </Button>,
-          <Button key="retry" onClick={resetError}>
-            Try Again
-          </Button>,
+            Go Home
+          </Button>
         ]}
       />
     </div>
@@ -51,7 +51,7 @@ class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null,
-    errorInfo: null,
+    errorInfo: null
   };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -59,27 +59,45 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error("Uncaught error:", error, errorInfo);
     this.setState({ error, errorInfo });
   }
 
-  public resetError = () => {
+  private resetError = () => {
     this.setState({ hasError: false, error: null, errorInfo: null });
   };
 
-  public render() {
-    const { hasError, error } = this.state;
-    const { children, fallback } = this.props;
+  private renderFallback(): ReactNode {
+    const { fallback } = this.props;
+    const { error } = this.state;
 
-    if (hasError) {
-      return fallback ? (
-        <>{fallback}</>
-      ) : (
-        <DefaultFallback error={error} resetError={this.resetError} />
-      );
+    if (!fallback) {
+      return <DefaultFallback error={error} resetError={this.resetError} />;
     }
 
-    return children;
+    if (React.isValidElement(fallback)) {
+      return fallback;
+    }
+
+    if (typeof fallback === 'function') {
+      try {
+        const result = (fallback as FallbackRender)({ error, resetError: this.resetError });
+        return result;
+      } catch (e) {
+        console.error('Error in fallback render:', e);
+        return <DefaultFallback error={error} resetError={this.resetError} />;
+      }
+    }
+
+    return <DefaultFallback error={error} resetError={this.resetError} />;
+  }
+
+  public render() {
+    if (this.state.hasError) {
+      return this.renderFallback();
+    }
+
+    return this.props.children;
   }
 }
 
