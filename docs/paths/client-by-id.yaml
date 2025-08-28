@@ -1,0 +1,74 @@
+parameters:
+  - name: id
+    in: path
+    required: true
+    description: Client ID
+    schema:
+      type: string
+      format: uuid
+      example: "123e4567-e89b-12d3-a456-426614174000"
+
+get:
+  tags:
+    - Clients
+  summary: Get client by ID
+  description: Returns a single client by their ID
+  responses:
+    '200':
+      description: Client found
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ClientResponse.yaml'
+    '404':
+      description: Client not found
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Error.yaml'
+
+put:
+  tags:
+    - Clients
+  summary: Update client
+  description: Update an existing client
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/ClientRequest.yaml'
+  responses:
+    '200':
+      description: Client updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ClientResponse.yaml'
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Error.yaml'
+    '404':
+      description: Client not found
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Error.yaml'
+
+delete:
+  tags:
+    - Clients
+  summary: Delete client
+  description: Delete a client by ID
+  responses:
+    '204':
+      description: Client deleted successfully
+    '404':
+      description: Client not found
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Error.yaml'

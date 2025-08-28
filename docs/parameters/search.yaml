@@ -1,0 +1,7 @@
+name: search
+in: query
+required: false
+description: Search term to filter results
+schema:
+  type: string
+  example: "john company"

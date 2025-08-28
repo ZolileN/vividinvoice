@@ -1,0 +1,15 @@
+type: object
+required:
+  - status
+  - token
+  - user
+properties:
+  status:
+    type: string
+    example: "success"
+  token:
+    type: string
+    description: JWT token for authenticated requests
+    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  user:
+    $ref: './User.yaml'

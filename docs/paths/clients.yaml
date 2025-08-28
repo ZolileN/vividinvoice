@@ -1,0 +1,42 @@
+get:
+  tags:
+    - Clients
+  summary: List all clients
+  description: Returns a paginated list of clients
+  parameters:
+    - $ref: '../parameters/page.yaml'
+    - $ref: '../parameters/limit.yaml'
+    - $ref: '../parameters/sort.yaml'
+    - $ref: '../parameters/search.yaml'
+  responses:
+    '200':
+      description: List of clients
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ClientsListResponse.yaml'
+
+post:
+  tags:
+    - Clients
+  summary: Create a new client
+  description: Create a new client record
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/ClientRequest.yaml'
+  responses:
+    '201':
+      description: Client created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ClientResponse.yaml'
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Error.yaml'

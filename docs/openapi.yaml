@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: VividInvoice API
+  description: |
+    # VividInvoice API Documentation
+    
+    This is the official API documentation for VividInvoice, a comprehensive invoicing solution.
+    
+    ## Authentication
+    
+    Most endpoints require authentication. Include the JWT token in the `Authorization` header:
+    
+    ```
+    Authorization: Bearer your-jwt-token
+    ```
+  version: 1.0.0
+  contact:
+    name: VividInvoice Support
+    email: support@vividinvoice.com
+
+servers:
+  - url: http://localhost:5000/api
+    description: Development server
+  - url: https://api.vividinvoice.com/v1
+    description: Production server
+
+# Security scheme for JWT authentication
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter JWT token in the format: Bearer <token>
+
+  # Common response schemas
+  schemas:
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Error message description"
+    
+    Success:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "Operation completed successfully"
+
+# Global security - applies to all operations
+security:
+  - bearerAuth: []
+
+# Import path definitions from separate files
+paths:
+  # Authentication
+  /auth:
+    $ref: './paths/auth.yaml'
+  
+  # Clients
+  /clients:
+    $ref: './paths/clients.yaml'
+  /clients/{id}:
+    $ref: './paths/client-by-id.yaml'
+  
+  # Invoices
+  /invoices:
+    $ref: './paths/invoices.yaml'
+  /invoices/{id}:
+    $ref: './paths/invoice-by-id.yaml'
+  
+  # Users
+  /users/me:
+    $ref: './paths/current-user.yaml'

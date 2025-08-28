@@ -1,0 +1,43 @@
+type: object
+required:
+  - id
+  - name
+  - email
+  - createdAt
+  - updatedAt
+properties:
+  id:
+    type: string
+    format: uuid
+    example: "123e4567-e89b-12d3-a456-426614174000"
+  name:
+    type: string
+    example: "Acme Inc."
+  email:
+    type: string
+    format: email
+    example: "contact@acme.com"
+  phone:
+    type: string
+    nullable: true
+    example: "+1234567890"
+  address:
+    type: string
+    nullable: true
+    example: "123 Business St, City, Country"
+  taxId:
+    type: string
+    nullable: true
+    example: "GB123456789"
+  notes:
+    type: string
+    nullable: true
+    example: "Important client with special requirements"
+  createdAt:
+    type: string
+    format: date-time
+    example: "2023-01-01T12:00:00Z"
+  updatedAt:
+    type: string
+    format: date-time
+    example: "2023-01-01T12:00:00Z"

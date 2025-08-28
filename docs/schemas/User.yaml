@@ -1,0 +1,40 @@
+type: object
+required:
+  - id
+  - email
+  - name
+properties:
+  id:
+    type: string
+    format: uuid
+    example: "550e8400-e29b-41d4-a716-446655440000"
+  email:
+    type: string
+    format: email
+    example: "user@example.com"
+  name:
+    type: string
+    example: "John Doe"
+  role:
+    type: string
+    enum: ["user", "admin"]
+    default: "user"
+    example: "user"
+  avatar:
+    type: string
+    format: uri
+    nullable: true
+    example: "https://example.com/avatars/john-doe.jpg"
+  createdAt:
+    type: string
+    format: date-time
+    example: "2023-01-01T12:00:00Z"
+  updatedAt:
+    type: string
+    format: date-time
+    example: "2023-01-01T12:00:00Z"
+  lastLoginAt:
+    type: string
+    format: date-time
+    nullable: true
+    example: "2023-01-01T12:00:00Z"

@@ -1,0 +1,35 @@
+type: object
+required:
+  - name
+  - email
+properties:
+  name:
+    type: string
+    minLength: 2
+    maxLength: 100
+    example: "Acme Inc."
+  email:
+    type: string
+    format: email
+    example: "contact@acme.com"
+  phone:
+    type: string
+    maxLength: 20
+    nullable: true
+    example: "+1234567890"
+  address:
+    type: string
+    maxLength: 255
+    nullable: true
+    example: "123 Business St, City, Country"
+  taxId:
+    type: string
+    maxLength: 50
+    nullable: true
+    description: "Tax/VAT identification number"
+    example: "GB123456789"
+  notes:
+    type: string
+    maxLength: 1000
+    nullable: true
+    example: "Important client with special requirements"

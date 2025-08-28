@@ -1,0 +1,30 @@
+post:
+  tags:
+    - Authentication
+  summary: Login
+  description: Authenticate a user and return a JWT token
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/LoginRequest.yaml'
+  responses:
+    '200':
+      description: Successful login
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/AuthResponse.yaml'
+    '401':
+      description: Invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Error.yaml'
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Error.yaml'
