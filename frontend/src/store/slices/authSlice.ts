@@ -44,14 +44,16 @@ const initialState: AuthState = {
 // Async thunks
 export const register = createAsyncThunk(
   'auth/register',
-  async (userData: RegisterData, { rejectWithValue }) => {
+  async (userData: RegisterData, { rejectWithValue, dispatch }) => {
     try {
       const response = await api.post<RegisterResponse>('/auth/register', userData);
       const { token, user } = response.data;
       setToken(token);
       setUser(user);
+      dispatch(setCredentials({ user, token }));
       return { token, user };
     } catch (error: any) {
+      dispatch(setError(error.response?.data?.message || 'Registration failed'));
       return rejectWithValue(error.response?.data?.message || 'Registration failed');
     }
   }
@@ -60,14 +62,16 @@ export const register = createAsyncThunk(
 // Update the login thunk
 export const login = createAsyncThunk(
   'auth/login',
-  async (credentials: LoginCredentials, { rejectWithValue }) => {
+  async (credentials: LoginCredentials, { rejectWithValue, dispatch }) => {
     try {
       const response = await api.post<LoginResponse>('/auth/login', credentials);
       const { token, user } = response.data;
       setToken(token);
       setUser(user);
+      dispatch(setCredentials({ user, token }));
       return { token, user };
     } catch (error: any) {
+      dispatch(setError(error.response?.data?.message || 'Login failed. Please check your credentials.'));
       return rejectWithValue(
         error.response?.data?.message || 'Login failed. Please check your credentials.'
       );
@@ -84,7 +88,7 @@ export const logout = createAsyncThunk('auth/logout', async (_, { dispatch }) =>
     // Clear auth data regardless of API call result
     removeToken();
     removeUser();
-    dispatch(resetAuthState());
+    dispatch(logout());
   }
 });
 
@@ -92,22 +96,36 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    resetAuthState: (state) => {
+    setCredentials: (
+      state,
+      action: PayloadAction<{ user: User | null; token: string | null }>
+    ) => {
+      const { user, token } = action.payload;
+      state.user = user;
+      state.token = token;
+      state.isAuthenticated = !!token && !!user;
+      state.loading = false;
+      state.error = null;
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
     },
-    setCredentials: (state, action: PayloadAction<{ user: User; token: string }>) => {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.isAuthenticated = true;
-      setToken(token);
-      setUser(user);
-    },
-    clearError: (state) => {
+    resetAuthState: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      state.loading = false;
       state.error = null;
     },
   },
@@ -116,15 +134,6 @@ const authSlice = createSlice({
     builder.addCase(register.pending, (state) => {
       state.loading = true;
       state.error = null;
-    });
-    builder.addCase(register.fulfilled, (state, action) => {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.isAuthenticated = true;
-      state.loading = false;
-      setToken(token);
-      setUser(user);
     });
     builder.addCase(register.rejected, (state, action) => {
       state.loading = false;
@@ -135,15 +144,6 @@ const authSlice = createSlice({
     builder.addCase(login.pending, (state) => {
       state.loading = true;
       state.error = null;
-    });
-    builder.addCase(login.fulfilled, (state, action) => {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.isAuthenticated = true;
-      state.loading = false;
-      setToken(token);
-      setUser(user);
     });
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
@@ -160,5 +160,12 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuthState, setCredentials, clearError } = authSlice.actions;
+export const { 
+  setCredentials, 
+  setLoading, 
+  setError, 
+  logout, 
+  resetAuthState 
+} = authSlice.actions;
+
 export default authSlice.reducer;

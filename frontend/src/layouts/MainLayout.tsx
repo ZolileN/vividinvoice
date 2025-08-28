@@ -23,6 +23,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../features/auth/authSlice';
+import { useAppNavigation, ROUTES } from '../utils/navigation';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -93,14 +94,6 @@ const StyledContent = styled(Content)`
   overflow: auto;
 `;
 
-const menuItems = [
-  { key: 'dashboard', icon: <DashboardOutlined />, label: 'Dashboard', path: '/dashboard' },
-  { key: 'invoices', icon: <FileTextOutlined />, label: 'Invoices', path: '/invoices' },
-  { key: 'clients', icon: <TeamOutlined />, label: 'Clients', path: '/clients' },
-  { key: 'payments', icon: <CreditCardOutlined />, label: 'Payments', path: '/payments' },
-  { key: 'settings', icon: <SettingOutlined />, label: 'Settings', path: '/settings' },
-];
-
 interface MainLayoutProps {
   children: React.ReactNode;
 }
@@ -109,7 +102,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const { goTo } = useAppNavigation();
   const location = useLocation();
   const {
     token: { colorBgContainer },
@@ -117,15 +110,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    goTo(ROUTES.LOGIN);
   };
 
   const userMenu = (
     <Menu>
-      <Menu.Item key="profile">
-        <Link to="/profile">
-          <UserOutlined /> Profile
-        </Link>
+      <Menu.Item key="profile" onClick={() => goTo(ROUTES.PROFILE)}>
+        <UserOutlined /> Profile
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="logout" onClick={handleLogout}>
@@ -133,6 +124,37 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       </Menu.Item>
     </Menu>
   );
+
+  const menuItems = [
+    { 
+      key: 'dashboard', 
+      icon: <DashboardOutlined />, 
+      label: 'Dashboard', 
+      path: ROUTES.DASHBOARD,
+      onClick: () => goTo(ROUTES.DASHBOARD)
+    },
+    { 
+      key: 'invoices', 
+      icon: <FileTextOutlined />, 
+      label: 'Invoices', 
+      path: ROUTES.INVOICES,
+      onClick: () => goTo(ROUTES.INVOICES)
+    },
+    { 
+      key: 'clients', 
+      icon: <TeamOutlined />, 
+      label: 'Clients', 
+      path: ROUTES.CLIENTS,
+      onClick: () => goTo(ROUTES.CLIENTS)
+    },
+    { 
+      key: 'settings', 
+      icon: <SettingOutlined />, 
+      label: 'Settings', 
+      path: ROUTES.SETTINGS,
+      onClick: () => goTo(ROUTES.SETTINGS)
+    },
+  ];
 
   const selectedKey = menuItems.find(item => location.pathname.startsWith(item.path))?.key || 'dashboard';
 
@@ -152,11 +174,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Menu
           theme="light"
           mode="inline"
-          defaultSelectedKeys={[selectedKey]}
           selectedKeys={[selectedKey]}
           items={menuItems.map(item => ({
             ...item,
-            label: <Link to={item.path}>{item.label}</Link>,
+            onClick: item.onClick,
+            label: <span>{item.label}</span>,
           }))}
         />
       </StyledSider>

@@ -39,51 +39,69 @@ const AppRoutes = () => {
   useEffect(() => {
     const token = getToken();
     if (token) {
-      // In a real app, you would validate the token with the server
-      // and fetch the user's data
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      dispatch(setCredentials({ user, token }));
+      try {
+        const userJson = localStorage.getItem('user');
+        const user = userJson ? JSON.parse(userJson) : null;
+        if (user) {
+          dispatch(setCredentials({ user, token }));
+        } else {
+          // If user data is invalid, clear the token and redirect to login
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        // Clear invalid data on error
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
   }, [dispatch]);
 
-  // If user is authenticated and trying to access auth pages, redirect to dashboard
-  if (isAuthenticated && ['/login', '/register'].includes(location.pathname)) {
+  // Redirect to dashboard if authenticated and trying to access auth pages
+  if (isAuthenticated && ['/login', '/register', '/'].includes(location.pathname)) {
     return <Navigate to="/dashboard" replace />;
-  }
-
-  // If user is not authenticated and trying to access protected routes, redirect to login
-  if (!isAuthenticated && !['/login', '/register', '/'].includes(location.pathname)) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return (
     <Routes>
       {/* Public Routes */}
-      <Route
-        element={
-          <AuthLayout>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-            </Routes>
-          </AuthLayout>
-        }
-      />
+      <Route element={!isAuthenticated ? <AuthLayout><Outlet /></AuthLayout> : <Navigate to="/dashboard" replace />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Route>
 
       {/* Protected Routes */}
-      <Route element={<MainLayout><Outlet /></MainLayout>}>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route element={
+        isAuthenticated ? 
+          <MainLayout><Outlet /></MainLayout> : 
+          <Navigate to="/login" state={{ from: location }} replace />
+      }>
         <Route path="/dashboard" element={<DashboardPage />} />
         
-        {/* Client Management Routes */}
+        {/* Client Routes */}
         <Route path="/clients" element={<ClientsPage />} />
         <Route path="/clients/new" element={<ClientForm />} />
         <Route path="/clients/:id" element={<ClientDetailPage />} />
         <Route path="/clients/:id/edit" element={<ClientForm />} />
         
-        {/* Add more protected routes here */}
+        {/* Invoice Routes */}
+        <Route path="/invoices/*" element={<InvoiceRoutes />} />
+        
+        {/* Settings */}
+        <Route path="/settings" element={<SettingsPage />} />
+        
+        {/* Catch all other routes */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
+
+      {/* Fallback for unauthenticated users */}
+      <Route path="*" element={
+        isAuthenticated ? 
+          <Navigate to="/dashboard" replace /> : 
+          <Navigate to="/login" state={{ from: location }} replace />
+      } />
     </Routes>
   );
 };
@@ -95,23 +113,7 @@ function App() {
       <ErrorBoundary>
         <BrowserRouter>
           <ConfigProvider>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/unauthorized" element={<UnauthorizedPage />} />
-              
-              {/* Protected Routes */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/invoices/*" element={<InvoiceRoutes />} />
-                <Route path="/clients/*" element={<ClientRoutes />} />
-                <Route path="/settings" element={<SettingsPage />} />
-              </Route>
-              
-              {/* 404 Page */}
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
+            <AppRoutes />
           </ConfigProvider>
         </BrowserRouter>
       </ErrorBoundary>
