@@ -88,7 +88,7 @@ export const logout = createAsyncThunk('auth/logout', async (_, { dispatch }) =>
     // Clear auth data regardless of API call result
     removeToken();
     removeUser();
-    dispatch(logout());
+    dispatch(clearAuthState());
   }
 });
 
@@ -114,14 +114,14 @@ const authSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
-    logout: (state) => {
+    clearAuthState(state) {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
     },
-    resetAuthState: (state) => {
+    resetAuthState(state) {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
@@ -164,7 +164,7 @@ export const {
   setCredentials, 
   setLoading, 
   setError, 
-  logout, 
+  clearAuthState,
   resetAuthState 
 } = authSlice.actions;
 

@@ -78,20 +78,22 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setCredentials: (state, action: PayloadAction<{ user: User | null; token: string | null }>) => {
+      const { user, token } = action.payload;
+      state.user = user;
+      state.token = token;
+      state.isAuthenticated = !!token && !!user;
+      state.loading = false;
+      state.error = null;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
     resetAuthState: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.loading = false;
-      state.error = null;
-    },
-    setCredentials: (state, action: PayloadAction<{ user: User; token: string }>) => {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.isAuthenticated = true;
-    },
-    clearError: (state) => {
       state.error = null;
     },
   },
@@ -102,10 +104,12 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      state.loading = false;
+      const { user, token } = action.payload;
+      state.user = user;
+      state.token = token;
       state.isAuthenticated = true;
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+      state.loading = false;
+      state.error = null;
     });
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
@@ -118,10 +122,12 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(register.fulfilled, (state, action) => {
-      state.loading = false;
+      const { user, token } = action.payload;
+      state.user = user;
+      state.token = token;
       state.isAuthenticated = true;
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+      state.loading = false;
+      state.error = null;
     });
     builder.addCase(register.rejected, (state, action) => {
       state.loading = false;
@@ -134,6 +140,7 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.loading = false;
+      state.error = null;
     });
   },
 });

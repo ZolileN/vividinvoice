@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate, useLocation, Outlet, BrowserRouter } from 'react-router-dom';
 import ConfigProvider from 'antd/es/config-provider';
 import { Provider } from 'react-redux';
@@ -31,32 +32,41 @@ import SettingsPage from './pages/SettingsPage';
 
 // Component to handle authentication and routing
 const AppRoutes = () => {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const [initialized, setInitialized] = useState(false);
 
   // Check for existing token on app load
   useEffect(() => {
-    const token = getToken();
-    if (token) {
-      try {
-        const userJson = localStorage.getItem('user');
-        const user = userJson ? JSON.parse(userJson) : null;
-        if (user) {
-          dispatch(setCredentials({ user, token }));
-        } else {
-          // If user data is invalid, clear the token and redirect to login
+    const initializeAuth = async () => {
+      const token = getToken();
+      if (token) {
+        try {
+          const userJson = localStorage.getItem('user');
+          const user = userJson ? JSON.parse(userJson) : null;
+          if (user) {
+            dispatch(setCredentials({ user, token }));
+          } else {
+            // If user data is invalid, clear the token and redirect to login
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          }
+        } catch (error) {
+          console.error('Error initializing auth:', error);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
         }
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        // Clear invalid data on error
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
       }
-    }
+      setInitialized(true);
+    };
+
+    initializeAuth();
   }, [dispatch]);
+
+  if (!initialized) {
+    return <div>Loading...</div>; // Or your loading spinner
+  }
 
   // Redirect to dashboard if authenticated and trying to access auth pages
   if (isAuthenticated && ['/login', '/register', '/'].includes(location.pathname)) {

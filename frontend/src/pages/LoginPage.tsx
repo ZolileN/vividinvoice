@@ -28,25 +28,25 @@ const LoginPage: React.FC = () => {
     }
   }, [error]);
 
-  const onFinish = async (values: any) => {
-    try {
-      const response = await login(values);
-      
-      // Save token and user data
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      
-      // Update Redux store
-      dispatch(setCredentials({ user: response.user, token: response.token }));
-      
-      // Redirect to the requested page or dashboard
-      navigate(from, { replace: true });
-      
-      message.success('Login successful!');
-    } catch (err) {
-      // Error is already handled by the error boundary and interceptors
-    }
-  };
+// In LoginPage.tsx
+const onFinish = async (values: any) => {
+  try {
+    const response = await login(values);
+    
+    // Save token and user data
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    
+    // Update Redux store - no need to unwrap here
+    dispatch(setCredentials({ user: response.user, token: response.token }));
+    
+    // Redirect after state is updated
+    navigate(from, { replace: true });
+    message.success('Login successful!');
+  } catch (err) {
+    // Error is already handled by the error boundary and interceptors
+  }
+};
 
   if (isLoading) {
     return <LoadingSpinner fullScreen />;
